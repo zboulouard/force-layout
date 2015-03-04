@@ -1,10 +1,83 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-
-</body>
+	<head>
+		<title>Force Layout Example 1</title>
+		<style>
+			
+			.node {
+				fill : #ccc;
+				stroke : #fff;
+				stroke-width : 2px;
+			}
+			
+			.link {
+				stroke : #777;
+				stroke-width : 2px;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<script src='http://d3js.org/d3.v3.min.js'></script>
+		
+		<script type="text/javascript">
+		
+		// Define the dimensions of the visualization.
+			
+			var width = 640;
+			var height = 480;
+			
+			var nodes = [
+							{ x: width/3, y: height/2 },
+							{ x: 2*width/3, y: height/2 }
+						];
+			
+			var links = [
+							{ source: 0, target: 1 }
+						];
+		
+			var svg = d3.select("body")										// Define the canvas
+							.append("svg")
+							.attr("width", width)
+							.attr("height", height);
+		
+			var force = d3.layout.force()									// Define the layout
+									.size([width, height])
+									.nodes(nodes)
+									.links(links);
+		
+			force.linkDistance(width/2);									// Define the link's distance
+		
+		// The order MUST be respected Links then Nodes
+		
+			var link = svg.selectAll(".link")								// Draw the links
+							.data(links)
+							.enter()
+								.append("line")
+								.attr("class", "link");
+		
+			var node = svg.selectAll(".node")								// Draw the nodes
+							.data(nodes)
+							.enter()
+								.append("circle")
+								.attr("class", "node");
+		
+			force.on('end', function() {
+	    
+				node.attr('r', width/25)									// Position the nodes
+		        	.attr('cx', function(d) { return d.x; })
+		        	.attr('cy', function(d) { return d.y; });
+		    
+				link.attr('x1', function(d) { return d.source.x; })			// Link the nodes
+		        	.attr('y1', function(d) { return d.source.y; })
+		        	.attr('x2', function(d) { return d.target.x; })
+		        	.attr('y2', function(d) { return d.target.y; });
+				
+			} );
+			
+			force.start();													// Start the layout
+			
+		</script>
+		
+	</body>
 </html>
